@@ -1,4 +1,4 @@
-from ggs.validation.validator import run_validation
+from ggs_genealogy.validation.validator import run_validation
 
 VALID_TTL = """@prefix : <https://example.org/koseki#> .
 @prefix k: <https://example.org/ns/koseki#> .

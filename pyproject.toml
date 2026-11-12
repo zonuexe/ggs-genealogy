@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.scripts]
-ggs = "ggs.cli:app"
+ggs = "ggs_genealogy.cli:app"
 
 [build-system]
 requires = ["uv_build>=0.13.7,<0.14.0"]
@@ -60,7 +60,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["ggs", "ggs_genealogy"]
+known-first-party = ["ggs_genealogy"]
 
 [tool.basedpyright]
 pythonVersion = "3.14"

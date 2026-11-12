@@ -9,15 +9,15 @@ import typer
 from rdflib import Graph
 from rich.console import Console
 
-from ggs import __version__
-from ggs.agent.prompt_builder import PromptBuilder
-from ggs.config import SAMPLE_TURTLE_TEMPLATE, GgsConfig, load_config
-from ggs.converters.dot_export import DotExporter
-from ggs.converters.gramps_export import GrampsExporter
-from ggs.converters.gramps_import import GrampsImporter
-from ggs.graph.diff import SemanticDiffer, render_diff_rich
-from ggs.query.runner import QueryRunner
-from ggs.validation.validator import render_validation_rich, run_validation
+from ggs_genealogy import __version__
+from ggs_genealogy.agent.prompt_builder import PromptBuilder
+from ggs_genealogy.config import SAMPLE_TURTLE_TEMPLATE, GgsConfig, load_config
+from ggs_genealogy.converters.dot_export import DotExporter
+from ggs_genealogy.converters.gramps_export import GrampsExporter
+from ggs_genealogy.converters.gramps_import import GrampsImporter
+from ggs_genealogy.graph.diff import SemanticDiffer, render_diff_rich
+from ggs_genealogy.query.runner import QueryRunner
+from ggs_genealogy.validation.validator import render_validation_rich, run_validation
 
 app = typer.Typer(
     name="ggs",

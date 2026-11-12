@@ -1,6 +1,6 @@
 from rdflib import Graph
 
-from ggs.graph.diff import SemanticDiffer, render_diff_rich
+from ggs_genealogy.graph.diff import SemanticDiffer, render_diff_rich
 
 TTL_A = """@prefix : <https://example.org/koseki#> .
 @prefix k: <https://example.org/ns/koseki#> .

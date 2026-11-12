@@ -1,6 +1,6 @@
 from rdflib import Graph
 
-from ggs.converters.dot_export import DotExporter
+from ggs_genealogy.converters.dot_export import DotExporter
 
 SAMPLE_TTL = """@prefix : <https://example.org/koseki#> .
 @prefix k: <https://example.org/ns/koseki#> .

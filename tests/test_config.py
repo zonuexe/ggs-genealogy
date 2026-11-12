@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from ggs.config import GgsConfig, find_config_file, load_config
+from ggs_genealogy.config import GgsConfig, find_config_file, load_config
 
 
 def test_default_config() -> None:

@@ -2,7 +2,7 @@ import json
 
 from rdflib import Graph
 
-from ggs.query.runner import QueryRunner
+from ggs_genealogy.query.runner import QueryRunner
 
 SAMPLE_TTL = """@prefix : <https://example.org/koseki#> .
 @prefix k: <https://example.org/ns/koseki#> .

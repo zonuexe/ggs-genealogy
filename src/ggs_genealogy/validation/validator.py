@@ -52,7 +52,7 @@ class ValidationReport:
 def get_builtin_ontology_graph() -> Graph:
     """Load default koseki OWL ontology bundled with the package."""
     g = Graph()
-    ont_path = importlib.resources.files("ggs.resources.ontology").joinpath("koseki.ttl")
+    ont_path = importlib.resources.files("ggs_genealogy.resources.ontology").joinpath("koseki.ttl")
     g.parse(data=ont_path.read_text(encoding="utf-8"), format="turtle")
     return g
 
@@ -60,7 +60,7 @@ def get_builtin_ontology_graph() -> Graph:
 def get_builtin_shapes_graph() -> Graph:
     """Load default koseki SHACL shapes bundled with the package."""
     g = Graph()
-    shacl_path = importlib.resources.files("ggs.resources.shapes").joinpath("koseki_shacl.ttl")
+    shacl_path = importlib.resources.files("ggs_genealogy.resources.shapes").joinpath("koseki_shacl.ttl")
     g.parse(data=shacl_path.read_text(encoding="utf-8"), format="turtle")
     return g
 

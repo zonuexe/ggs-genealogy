@@ -29,7 +29,7 @@ class PromptBuilder:
 
     def get_ontology_content(self) -> str:
         """Load bundled koseki.ttl ontology string."""
-        ont_path = importlib.resources.files("ggs.resources.ontology").joinpath("koseki.ttl")
+        ont_path = importlib.resources.files("ggs_genealogy.resources.ontology").joinpath("koseki.ttl")
         return ont_path.read_text(encoding="utf-8")
 
     def get_existing_turtle(self) -> str:

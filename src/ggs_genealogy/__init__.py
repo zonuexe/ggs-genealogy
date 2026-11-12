@@ -1,3 +1,6 @@
-from ggs_genealogy.person import Person
+"""Genealogical Graph System (GGS)
 
-__all__ = ["Person"]
+Japanese Koseki RDF & Gramps Bridge
+"""
+
+__version__ = "0.1.0"

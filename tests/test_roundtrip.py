@@ -5,8 +5,8 @@ from lxml import etree
 from rdflib import Graph
 from rdflib.compare import isomorphic, to_isomorphic
 
-from ggs.converters.gramps_export import GrampsExporter
-from ggs.converters.gramps_import import GrampsImporter
+from ggs_genealogy.converters.gramps_export import GrampsExporter
+from ggs_genealogy.converters.gramps_import import GrampsImporter
 
 if TYPE_CHECKING:
     from pathlib import Path

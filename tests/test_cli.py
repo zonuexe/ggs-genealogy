@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 
 from typer.testing import CliRunner
 
-from ggs import __version__
-from ggs.cli import app
+from ggs_genealogy import __version__
+from ggs_genealogy.cli import app
 
 if TYPE_CHECKING:
     from pathlib import Path

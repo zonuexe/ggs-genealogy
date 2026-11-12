@@ -38,7 +38,7 @@ class QueryRunner:
         if name not in cls.PRESETS:
             raise ValueError(f"Unknown query preset: {name}. Available: {', '.join(cls.list_presets())}")
         file_name = cls.PRESETS[name]
-        q_path = importlib.resources.files("ggs.resources.queries").joinpath(file_name)
+        q_path = importlib.resources.files("ggs_genealogy.resources.queries").joinpath(file_name)
         return q_path.read_text(encoding="utf-8")
 
     def execute(self, sparql: str) -> Result:
