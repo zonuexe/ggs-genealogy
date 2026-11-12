@@ -1,3 +1,5 @@
+> **アーカイブ:** 本書は、未決事項を含む初期の対話をエージェントがまとめた叩き台であり、経緯を残す目的でのみ保管している。方針は [ADR-0](../adr/0000-north-star.md) が優先する。
+
 # Project Handoff Specification: `ggs-genealogy` (Genealogical Graph System)
 
 ## 1. プロジェクト概要と目的
