@@ -1,0 +1,153 @@
+@prefix :        <https://example.org/ns/koseki#> .
+@prefix ic:      <https://imi.go.jp/ns/core/rdf#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.org/ns/koseki>
+    a owl:Ontology ;
+    rdfs:label "戸籍オントロジー (Minimal Japanese Koseki Ontology)"@ja ;
+    rdfs:comment "IMIコア語彙2.4.2を拡張し、戸籍（戸・戸主・身分事項・除籍）を管理するための語彙体系。"@ja .
+
+:戸
+    a owl:Class ;
+    rdfs:label "戸（家）"@ja ;
+    rdfs:comment "戸籍簿における公簿単位（旧民法下の「家」、または現行戸籍の単位）。"@ja .
+
+:人物
+    a owl:Class ;
+    rdfs:subClassOf ic:人型 ;
+    rdfs:label "人物"@ja ;
+    rdfs:comment "戸籍に記載される個人。IMIの人型を継承。"@ja .
+
+:身分事項イベント
+    a owl:Class ;
+    rdfs:subClassOf ic:イベント型 ;
+    rdfs:label "身分事項イベント"@ja ;
+    rdfs:comment "戸籍欄内に記載される個人の身分変動（出生、死亡、婚姻、縁組、家督相続、除籍等）。"@ja .
+
+:家督相続イベント
+    a owl:Class ;
+    rdfs:subClassOf :身分事項イベント ;
+    rdfs:label "家督相続イベント"@ja .
+
+:縁組イベント
+    a owl:Class ;
+    rdfs:subClassOf :身分事項イベント ;
+    rdfs:label "縁組イベント"@ja .
+
+:除籍イベント
+    a owl:Class ;
+    rdfs:subClassOf :身分事項イベント ;
+    rdfs:label "除籍イベント"@ja ;
+    rdfs:comment "死亡、婚姻、分家、転籍等に伴い個人の身分事項欄が抹消（除籍）された事由。"@ja .
+
+:本籍
+    a owl:ObjectProperty ;
+    rdfs:domain :戸 ;
+    rdfs:range ic:住所型 ;
+    rdfs:subPropertyOf ic:住所 ;
+    rdfs:label "本籍"@ja .
+
+:戸主
+    a owl:ObjectProperty ;
+    rdfs:domain :戸 ;
+    rdfs:range :人物 ;
+    rdfs:label "戸主"@ja .
+
+:筆頭者
+    a owl:ObjectProperty ;
+    rdfs:subPropertyOf :戸主 ;
+    rdfs:domain :戸 ;
+    rdfs:range :人物 ;
+    rdfs:label "筆頭者"@ja .
+
+:構成員
+    a owl:ObjectProperty ;
+    rdfs:domain :戸 ;
+    rdfs:range :人物 ;
+    owl:inverseOf :在籍戸 ;
+    rdfs:label "構成員"@ja .
+
+:除籍簿化
+    a owl:DatatypeProperty ;
+    rdfs:domain :戸 ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "除籍簿フラグ"@ja .
+
+:在籍戸
+    a owl:ObjectProperty ;
+    rdfs:domain :人物 ;
+    rdfs:range :戸 ;
+    rdfs:label "在籍戸"@ja .
+
+:戸主との続柄
+    a owl:DatatypeProperty ;
+    rdfs:domain :人物 ;
+    rdfs:range xsd:string ;
+    rdfs:label "戸主との続柄"@ja .
+
+:実父
+    a owl:ObjectProperty ;
+    rdfs:domain :人物 ;
+    rdfs:range :人物 ;
+    rdfs:label "実父"@ja .
+
+:実母
+    a owl:ObjectProperty ;
+    rdfs:domain :人物 ;
+    rdfs:range :人物 ;
+    rdfs:label "実母"@ja .
+
+:養父
+    a owl:ObjectProperty ;
+    rdfs:domain :人物 ;
+    rdfs:range :人物 ;
+    rdfs:label "養父"@ja .
+
+:養母
+    a owl:ObjectProperty ;
+    rdfs:domain :人物 ;
+    rdfs:range :人物 ;
+    rdfs:label "養母"@ja .
+
+:謄本記載事由
+    a owl:DatatypeProperty ;
+    rdfs:domain :身分事項イベント ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf ic:説明 ;
+    rdfs:label "謄本記載事由文"@ja .
+
+:届出日
+    a owl:ObjectProperty ;
+    rdfs:domain :身分事項イベント ;
+    rdfs:range ic:日付型 ;
+    rdfs:subPropertyOf ic:日時 ;
+    rdfs:label "届出日"@ja .
+
+:前戸主
+    a owl:ObjectProperty ;
+    rdfs:domain :家督相続イベント ;
+    rdfs:range :人物 ;
+    rdfs:subPropertyOf ic:関係者 ;
+    rdfs:label "前戸主"@ja .
+
+:新戸主
+    a owl:ObjectProperty ;
+    rdfs:domain :家督相続イベント ;
+    rdfs:range :人物 ;
+    rdfs:subPropertyOf ic:主体 ;
+    rdfs:label "新戸主"@ja .
+
+:異動元戸
+    a owl:ObjectProperty ;
+    rdfs:domain :身分事項イベント ;
+    rdfs:range :戸 ;
+    rdfs:label "異動元戸"@ja .
+
+:異動先戸
+    a owl:ObjectProperty ;
+    rdfs:domain :身分事項イベント ;
+    rdfs:range :戸 ;
+    rdfs:label "異動先戸"@ja .

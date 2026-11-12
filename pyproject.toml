@@ -1,0 +1,83 @@
+[project]
+name = "ggs-genealogy"
+version = "0.1.0"
+description = "Genealogical Graph System - Japanese Koseki RDF & Gramps Bridge"
+readme = "README.md"
+authors = [
+    { name = "USAMI Kenta", email = "tadsan@zonu.me" }
+]
+license = "GPL-3.0-or-later"
+requires-python = ">=3.14"
+dependencies = [
+    "lxml>=5.2.0",
+    "pydantic>=2.7.0",
+    "pyshacl>=0.26.0",
+    "rdflib>=7.0.0",
+    "rich>=13.7.0",
+    "typer>=0.12.0",
+]
+
+[project.scripts]
+ggs = "ggs.cli:app"
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.40.2",
+    "lxml-stubs>=0.5.1",
+    "pytest>=9.2.0",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.17.4",
+]
+
+[tool.ruff]
+target-version = "py314"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "A",
+    "ASYNC",
+    "B",
+    "C4",
+    "E",
+    "F",
+    "I",
+    "N",
+    "PT",
+    "PTH",
+    "RUF",
+    "SIM",
+    "TC",
+    "UP",
+    "W",
+]
+ignore = [
+    "E501",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ggs", "ggs_genealogy"]
+
+[tool.basedpyright]
+pythonVersion = "3.14"
+typeCheckingMode = "standard"
+include = ["src", "tests"]
+reportMissingTypeStubs = false
+reportUnknownMemberType = false
+reportUnknownVariableType = false
+reportUnknownArgumentType = false
+# Conflicts with the Ruff formatter.
+reportImplicitStringConcatenation = false
+executionEnvironments = [
+    { root = "tests", reportUnusedCallResult = false },
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--strict-config"]
+xfail_strict = true
+filterwarnings = ["error"]

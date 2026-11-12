@@ -1,0 +1,243 @@
+@prefix :        <https://example.org/ns/koseki#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix ic:      <https://imi.go.jp/ns/core/rdf#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+:PrefixDeclarations
+    a owl:Ontology ;
+    sh:declare [
+        sh:prefix "k" ;
+        sh:namespace "https://example.org/ns/koseki#"^^xsd:anyURI ;
+    ] , [
+        sh:prefix "ic" ;
+        sh:namespace "https://imi.go.jp/ns/core/rdf#"^^xsd:anyURI ;
+    ] , [
+        sh:prefix "xsd" ;
+        sh:namespace "http://www.w3.org/2001/XMLSchema#"^^xsd:anyURI ;
+    ] .
+
+:HouseholdShape
+    a sh:NodeShape ;
+    sh:targetClass :戸 ;
+    sh:property [
+        sh:path :本籍 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:node :AddressShape ;
+        sh:severity sh:Violation ;
+        sh:message "「戸」には必ず1つの :本籍（ic:住所型）が定義されている必要があります。"@ja ;
+    ] ;
+    sh:property [
+        sh:path :戸主 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class :人物 ;
+        sh:severity sh:Violation ;
+        sh:message "1つの「戸」における代表 :戸主（または :筆頭者）は必ず1名である必要があります（歴代の代替わりは :家督相続イベント で記述してください）。"@ja ;
+    ] ;
+    sh:property [
+        sh:path :構成員 ;
+        sh:minCount 1 ;
+        sh:class :人物 ;
+        sh:severity sh:Violation ;
+        sh:message "「戸」には少なくとも1名の :構成員 が所属している必要があります。"@ja ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:prefixes :PrefixDeclarations ;
+        sh:severity sh:Violation ;
+        sh:message "指定された :戸主（{?koshu}）がその戸の :構成員（または逆方向の :在籍戸）に含まれていません。"@ja ;
+        sh:select """
+            SELECT $this ?koshu
+            WHERE {
+                $this k:戸主 ?koshu .
+                FILTER NOT EXISTS {
+                    { $this k:構成員 ?koshu } UNION { ?koshu k:在籍戸 $this }
+                }
+            }
+        """ ;
+    ] .
+
+:PersonShape
+    a sh:NodeShape ;
+    sh:targetClass :人物 ;
+    sh:property [
+        sh:path ic:氏名 ;
+        sh:minCount 1 ;
+        sh:node :NameShape ;
+        sh:severity sh:Violation ;
+        sh:message "人物には少なくとも1つの ic:氏名 が必要です。"@ja ;
+    ] ;
+    sh:property [
+        sh:path :実父 ;
+        sh:maxCount 1 ;
+        sh:class :人物 ;
+        sh:severity sh:Violation ;
+        sh:message "1人の人物に複数の :実父 を設定することはできません（養父は :養父 を使用してください）。"@ja ;
+    ] ;
+    sh:property [
+        sh:path :実母 ;
+        sh:maxCount 1 ;
+        sh:class :人物 ;
+        sh:severity sh:Violation ;
+        sh:message "1人の人物に複数の :実母 を設定することはできません（養母は :養母 を使用してください）。"@ja ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:prefixes :PrefixDeclarations ;
+        sh:severity sh:Violation ;
+        sh:message "人物（{$this}）が自分自身の親（実親・養親）として参照されています。"@ja ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                $this (k:実父|k:実母|k:養父|k:養母)+ $this .
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:prefixes :PrefixDeclarations ;
+        sh:severity sh:Violation ;
+        sh:message "人物の生年月日（{?birth}）が死亡年月日（{?death}）より後の日付になっています。"@ja ;
+        sh:select """
+            SELECT $this ?birth ?death
+            WHERE {
+                $this ic:生年月日/ic:標準型日時 ?birth ;
+                      ic:死亡年月日/ic:標準型日時 ?death .
+                FILTER (STR(?birth) > STR(?death))
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:prefixes :PrefixDeclarations ;
+        sh:severity sh:Violation ;
+        sh:message "実親（{?parent}: {?pBirth}生）の生年月日が、子（{$this}: {?cBirth}生）の生年月日以降になっています。"@ja ;
+        sh:select """
+            SELECT $this ?parent ?pBirth ?cBirth
+            WHERE {
+                $this (k:実父|k:実母) ?parent ;
+                      ic:生年月日/ic:標準型日時 ?cBirth .
+                ?parent ic:生年月日/ic:標準型日時 ?pBirth .
+                FILTER (STR(?pBirth) >= STR(?cBirth))
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:prefixes :PrefixDeclarations ;
+        sh:severity sh:Warning ;
+        sh:message "【警告】養親（{?adoptiveParent}: {?pBirth}生）が養子（{$this}: {?cBirth}生）と同年または年少です。謄本の記載または年号変換を確認してください。"@ja ;
+        sh:select """
+            SELECT $this ?adoptiveParent ?pBirth ?cBirth
+            WHERE {
+                $this (k:養父|k:養母) ?adoptiveParent ;
+                      ic:生年月日/ic:標準型日時 ?cBirth .
+                ?adoptiveParent ic:生年月日/ic:標準型日時 ?pBirth .
+                FILTER (STR(?pBirth) >= STR(?cBirth))
+            }
+        """ ;
+    ] .
+
+:StatusEventShape
+    a sh:NodeShape ;
+    sh:targetClass :身分事項イベント ;
+    sh:or (
+        [ sh:path ic:日時 ; sh:minCount 1 ]
+        [ sh:path :謄本記載事由 ; sh:minCount 1 ]
+    ) ;
+    sh:message "身分事項イベントには ic:日時 または :謄本記載事由 の少なくとも一方が記述されている必要があります。"@ja ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:prefixes :PrefixDeclarations ;
+        sh:severity sh:Warning ;
+        sh:message "【警告】人物（{?person}）のイベント発生日（{?evDate}）が生年月日（{?birth}）より前になっています。"@ja ;
+        sh:select """
+            SELECT $this ?person ?birth ?evDate
+            WHERE {
+                { ?person ic:イベント $this } UNION {$this ic:主体 ?person }
+                $this ic:日時/ic:標準型日時 ?evDate .
+                ?person ic:生年月日/ic:標準型日時 ?birth .
+                FILTER (STR(?evDate) < STR(?birth))
+            }
+        """ ;
+    ] .
+
+:KatokuSozokuShape
+    a sh:NodeShape ;
+    sh:targetClass :家督相続イベント ;
+    sh:property [
+        sh:path :新戸主 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class :人物 ;
+        sh:severity sh:Violation ;
+        sh:message "家督相続イベントには :新戸主 が1名必須です。"@ja ;
+    ] ;
+    sh:property [
+        sh:path :前戸主 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class :人物 ;
+        sh:severity sh:Warning ;
+        sh:message "【警告】家督相続イベントに :前戸主 が指定されていません。"@ja ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:prefixes :PrefixDeclarations ;
+        sh:severity sh:Violation ;
+        sh:message "家督相続イベントにおいて :前戸主 と :新戸主 に同一人物（{?head}）が指定されています。"@ja ;
+        sh:select """
+            SELECT $this ?head
+            WHERE {
+                $this k:新戸主 ?head ;
+                      k:前戸主 ?head .
+            }
+        """ ;
+    ] .
+
+:NameShape
+    a sh:NodeShape ;
+    sh:targetClass ic:氏名型 ;
+    sh:or (
+        [ sh:path ic:表記 ; sh:minCount 1 ; sh:datatype xsd:string ]
+        [ sh:path ic:姓 ; sh:minCount 1 ; sh:datatype xsd:string ]
+        [ sh:path ic:名 ; sh:minCount 1 ; sh:datatype xsd:string ]
+    ) ;
+    sh:message "ic:氏名型 には ic:表記、ic:姓、ic:名 のいずれかが必要です。"@ja .
+
+:DateShape
+    a sh:NodeShape ;
+    sh:targetClass ic:日付型 ;
+    sh:property [
+        sh:path ic:表記 ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:severity sh:Warning ;
+        sh:message "【警告】ic:日付型 には謄本記載の和暦原文（ic:表記）を残すことを推奨します。"@ja ;
+    ] ;
+    sh:property [
+        sh:path ic:標準型日時 ;
+        sh:maxCount 1 ;
+        sh:or (
+            [ sh:datatype xsd:date ]
+            [ sh:datatype xsd:gYearMonth ]
+            [ sh:datatype xsd:gYear ]
+        ) ;
+        sh:severity sh:Violation ;
+        sh:message "ic:標準型日時 は xsd:date (YYYY-MM-DD)、xsd:gYearMonth (YYYY-MM)、xsd:gYear (YYYY) のいずれかの型で記述してください。"@ja ;
+    ] .
+
+:AddressShape
+    a sh:NodeShape ;
+    sh:targetClass ic:住所型 ;
+    sh:property [
+        sh:path ic:表記 ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:severity sh:Violation ;
+        sh:message "本籍や住所（ic:住所型）には謄本記載の文字列（ic:表記）が必須です。"@ja ;
+    ] .

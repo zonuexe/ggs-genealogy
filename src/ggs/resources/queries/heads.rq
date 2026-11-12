@@ -1,0 +1,24 @@
+PREFIX : <https://example.org/ns/koseki#>
+PREFIX ic: <https://imi.go.jp/ns/core/rdf#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?household ?householdLabel ?head ?headName ?predecessor ?predecessorName ?event ?date ?reason
+WHERE {
+    ?household a :戸 .
+    OPTIONAL { ?household rdfs:label ?householdLabel }
+    OPTIONAL {
+        ?household :戸主 ?head .
+        OPTIONAL { ?head ic:氏名/ic:表記 ?headName }
+    }
+    OPTIONAL {
+        ?event a :家督相続イベント ;
+               :新戸主 ?head .
+        OPTIONAL {
+            ?event :前戸主 ?predecessor .
+            OPTIONAL { ?predecessor ic:氏名/ic:表記 ?predecessorName }
+        }
+        OPTIONAL { ?event ic:日時/ic:標準型日時 ?date }
+        OPTIONAL { ?event :謄本記載事由 ?reason }
+    }
+}
+ORDER BY ?household ?date

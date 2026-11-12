@@ -1,0 +1,34 @@
+PREFIX : <https://example.org/ns/koseki#>
+PREFIX ic: <https://imi.go.jp/ns/core/rdf#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?person ?personName ?adoptiveFather ?adoptiveFatherName ?adoptiveMother ?adoptiveMotherName ?bioFather ?bioFatherName ?bioMother ?bioMotherName ?event ?reason
+WHERE {
+    ?person a :人物 .
+    OPTIONAL { ?person ic:氏名/ic:表記 ?personName }
+    
+    FILTER (EXISTS { ?person :養父 ?adoptiveFather } || EXISTS { ?person :養母 ?adoptiveMother })
+    
+    OPTIONAL {
+        ?person :養父 ?adoptiveFather .
+        OPTIONAL { ?adoptiveFather ic:氏名/ic:表記 ?adoptiveFatherName }
+    }
+    OPTIONAL {
+        ?person :養母 ?adoptiveMother .
+        OPTIONAL { ?adoptiveMother ic:氏名/ic:表記 ?adoptiveMotherName }
+    }
+    OPTIONAL {
+        ?person :実父 ?bioFather .
+        OPTIONAL { ?bioFather ic:氏名/ic:表記 ?bioFatherName }
+    }
+    OPTIONAL {
+        ?person :実母 ?bioMother .
+        OPTIONAL { ?bioMother ic:氏名/ic:表記 ?bioMotherName }
+    }
+    OPTIONAL {
+        ?event a :縁組イベント ;
+               ic:主体 ?person .
+        OPTIONAL { ?event :謄本記載事由 ?reason }
+    }
+}
+ORDER BY ?person
