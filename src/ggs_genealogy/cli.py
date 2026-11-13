@@ -95,7 +95,9 @@ def init(
 def validate(
     paths: Annotated[
         list[Path] | None,
-        typer.Argument(help="RDF files or directories to validate. Defaults to data_dir."),
+        typer.Argument(
+            help="RDF files or directories to validate. Defaults to data_dir."
+        ),
     ] = None,
     strict: Annotated[
         bool,
@@ -125,7 +127,9 @@ def export(
     ] = None,
     compress: Annotated[
         bool,
-        typer.Option("--compress/--no-compress", help="Compress output with gzip (for Gramps)"),
+        typer.Option(
+            "--compress/--no-compress", help="Compress output with gzip (for Gramps)"
+        ),
     ] = False,
     source: Annotated[
         Path | None,
@@ -159,7 +163,9 @@ def export(
         out_path.write_text(graph.serialize(format="turtle"), encoding="utf-8")
         console.print(f"[bold green]Exported Turtle:[/] {out_path}")
     else:
-        console.print(f"[bold red]Error:[/] Unknown export format '{to}'. Choose from gramps, dot, ttl.")
+        console.print(
+            f"[bold red]Error:[/] Unknown export format '{to}'. Choose from gramps, dot, ttl."
+        )
         raise typer.Exit(code=1)
 
 
@@ -198,7 +204,12 @@ def import_gramps(
 
     # Compute diff between base and merged
     diff_result = SemanticDiffer.diff(base_graph, merged_graph)
-    render_diff_rich(diff_result, source_a_label="Existing RDF", source_b_label="Imported Gramps", console=console)
+    render_diff_rich(
+        diff_result,
+        source_a_label="Existing RDF",
+        source_b_label="Imported Gramps",
+        console=console,
+    )
 
     if dry_run:
         console.print("[yellow]Dry-run mode:[/] No files were modified.")
@@ -230,7 +241,9 @@ def diff(
 def query(
     preset: Annotated[
         str | None,
-        typer.Option("--preset", "-p", help="Preset query name (e.g. heads, adoptions)"),
+        typer.Option(
+            "--preset", "-p", help="Preset query name (e.g. heads, adoptions)"
+        ),
     ] = None,
     file: Annotated[
         Path | None,
@@ -279,7 +292,9 @@ def query(
 def prompt(
     data_paths: Annotated[
         list[Path] | None,
-        typer.Option("--data", "-d", help="Paths to existing RDF data to provide as context"),
+        typer.Option(
+            "--data", "-d", help="Paths to existing RDF data to provide as context"
+        ),
     ] = None,
     input_text: Annotated[
         str | None,
@@ -287,7 +302,10 @@ def prompt(
     ] = None,
     include_existing: Annotated[
         bool,
-        typer.Option("--include-existing/--no-existing", help="Include existing data graph in prompt"),
+        typer.Option(
+            "--include-existing/--no-existing",
+            help="Include existing data graph in prompt",
+        ),
     ] = True,
 ) -> None:
     """Generate LLM system prompt and context to extract koseki transcripts into RDF."""

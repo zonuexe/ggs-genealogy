@@ -1,4 +1,3 @@
-
 from typing import TYPE_CHECKING
 
 from typer.testing import CliRunner
@@ -35,11 +34,11 @@ def test_cli_diff(tmp_path: Path) -> None:
     f1 = tmp_path / "a.ttl"
     f2 = tmp_path / "b.ttl"
     f1.write_text(
-        '@prefix : <https://example.org/k#> .\n:p a <https://example.org/ns/koseki#人物> .\n',
+        "@prefix : <https://example.org/k#> .\n:p a <https://example.org/ns/koseki#人物> .\n",
         encoding="utf-8",
     )
     f2.write_text(
-        '@prefix : <https://example.org/k#> .\n:p a <https://example.org/ns/koseki#人物> .\n',
+        "@prefix : <https://example.org/k#> .\n:p a <https://example.org/ns/koseki#人物> .\n",
         encoding="utf-8",
     )
 

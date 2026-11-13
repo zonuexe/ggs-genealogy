@@ -29,7 +29,9 @@ class PromptBuilder:
 
     def get_ontology_content(self) -> str:
         """Load bundled koseki.ttl ontology string."""
-        ont_path = importlib.resources.files("ggs_genealogy.resources.ontology").joinpath("koseki.ttl")
+        ont_path = importlib.resources.files(
+            "ggs_genealogy.resources.ontology"
+        ).joinpath("koseki.ttl")
         return ont_path.read_text(encoding="utf-8")
 
     def get_existing_turtle(self) -> str:
@@ -87,27 +89,33 @@ class PromptBuilder:
         ]
 
         if existing_ttl:
-            sections.extend([
-                "",
-                "# Existing Knowledge Graph (Context)",
-                "```turtle",
-                existing_ttl.strip(),
-                "```",
-            ])
+            sections.extend(
+                [
+                    "",
+                    "# Existing Knowledge Graph (Context)",
+                    "```turtle",
+                    existing_ttl.strip(),
+                    "```",
+                ]
+            )
 
         if self.input_text:
-            sections.extend([
-                "",
-                "# Input Transcript Text to Process",
-                "```text",
-                self.input_text.strip(),
-                "```",
-            ])
+            sections.extend(
+                [
+                    "",
+                    "# Input Transcript Text to Process",
+                    "```text",
+                    self.input_text.strip(),
+                    "```",
+                ]
+            )
 
-        sections.extend([
-            "",
-            "# Output Format",
-            "Output only valid RDF Turtle enclosed in a ````turtle ... ```` block.",
-        ])
+        sections.extend(
+            [
+                "",
+                "# Output Format",
+                "Output only valid RDF Turtle enclosed in a ````turtle ... ```` block.",
+            ]
+        )
 
         return "\n".join(sections) + "\n"

@@ -52,7 +52,9 @@ class ValidationReport:
 def get_builtin_ontology_graph() -> Graph:
     """Load default koseki OWL ontology bundled with the package."""
     g = Graph()
-    ont_path = importlib.resources.files("ggs_genealogy.resources.ontology").joinpath("koseki.ttl")
+    ont_path = importlib.resources.files("ggs_genealogy.resources.ontology").joinpath(
+        "koseki.ttl"
+    )
     g.parse(data=ont_path.read_text(encoding="utf-8"), format="turtle")
     return g
 
@@ -60,7 +62,9 @@ def get_builtin_ontology_graph() -> Graph:
 def get_builtin_shapes_graph() -> Graph:
     """Load default koseki SHACL shapes bundled with the package."""
     g = Graph()
-    shacl_path = importlib.resources.files("ggs_genealogy.resources.shapes").joinpath("koseki_shacl.ttl")
+    shacl_path = importlib.resources.files("ggs_genealogy.resources.shapes").joinpath(
+        "koseki_shacl.ttl"
+    )
     g.parse(data=shacl_path.read_text(encoding="utf-8"), format="turtle")
     return g
 
@@ -97,7 +101,11 @@ def extract_issues(results_graph: Graph) -> list[ValidationIssue]:
 
     for result in results_graph.subjects(RDF.type, SH.ValidationResult):
         severity_uri = results_graph.value(result, SH.resultSeverity)
-        severity = severity_uri.split("#")[-1] if isinstance(severity_uri, URIRef) else "Violation"
+        severity = (
+            severity_uri.split("#")[-1]
+            if isinstance(severity_uri, URIRef)
+            else "Violation"
+        )
 
         msg_val = results_graph.value(result, SH.resultMessage)
         message = str(msg_val) if msg_val else "Validation constraint violated"
@@ -136,10 +144,14 @@ def run_validation(
     """
     data_graph = _coerce_to_graph(data_source)
     shapes_graph = (
-        _coerce_to_graph(shapes_source) if shapes_source is not None else get_builtin_shapes_graph()
+        _coerce_to_graph(shapes_source)
+        if shapes_source is not None
+        else get_builtin_shapes_graph()
     )
     ont_graph = (
-        _coerce_to_graph(ont_source) if ont_source is not None else get_builtin_ontology_graph()
+        _coerce_to_graph(ont_source)
+        if ont_source is not None
+        else get_builtin_ontology_graph()
     )
 
     conforms, results_graph, results_text = pyshacl.validate(
@@ -167,7 +179,9 @@ def run_validation(
     )
 
 
-def render_validation_rich(report: ValidationReport, console: Console | None = None) -> None:
+def render_validation_rich(
+    report: ValidationReport, console: Console | None = None
+) -> None:
     """Render validation report using Rich console."""
     c = console or Console()
 

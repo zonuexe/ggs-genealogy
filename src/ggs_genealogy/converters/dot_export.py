@@ -88,7 +88,9 @@ class DotExporter:
                     birth = str(b_text)
                     break
                 if not birth:
-                    for b_date in self.graph.objects(b_node, URIRef(IMI_NS + "標準型日時")):
+                    for b_date in self.graph.objects(
+                        b_node, URIRef(IMI_NS + "標準型日時")
+                    ):
                         birth = str(b_date)
                         break
 
@@ -105,7 +107,7 @@ class DotExporter:
                 label_parts.append(f"生: {birth}")
 
             label_html = "<" + "<br/>".join(label_parts) + ">"
-            lines.append(f'    {p_id} [label={label_html}];')
+            lines.append(f"    {p_id} [label={label_html}];")
 
         lines.append("")
 
@@ -120,24 +122,34 @@ class DotExporter:
                 lines.append(f'    {m_id} -> {c_id} [label="実母", color="#e74c3c"];')
             for a_father in self.graph.objects(child, URIRef(KOSEKI_NS + "養父")):
                 af_id = sanitize_id(a_father)
-                lines.append(f'    {af_id} -> {c_id} [label="養父", style="dashed", color="#8e44ad"];')
+                lines.append(
+                    f'    {af_id} -> {c_id} [label="養父", style="dashed", color="#8e44ad"];'
+                )
             for a_mother in self.graph.objects(child, URIRef(KOSEKI_NS + "養母")):
                 am_id = sanitize_id(a_mother)
-                lines.append(f'    {am_id} -> {c_id} [label="養母", style="dashed", color="#d35400"];')
+                lines.append(
+                    f'    {am_id} -> {c_id} [label="養母", style="dashed", color="#d35400"];'
+                )
 
         # 4. Edges: Household head succession
-        for event in self.graph.subjects(RDF.type, URIRef(KOSEKI_NS + "家督相続イベント")):
+        for event in self.graph.subjects(
+            RDF.type, URIRef(KOSEKI_NS + "家督相続イベント")
+        ):
             prev_heads = list(self.graph.objects(event, URIRef(KOSEKI_NS + "前戸主")))
             new_heads = list(self.graph.objects(event, URIRef(KOSEKI_NS + "新戸主")))
             if prev_heads and new_heads:
                 p_id = sanitize_id(prev_heads[0])
                 n_id = sanitize_id(new_heads[0])
-                lines.append(f'    {p_id} -> {n_id} [label="家督相続", style="dotted", color="#16a085", penwidth=2];')
+                lines.append(
+                    f'    {p_id} -> {n_id} [label="家督相続", style="dotted", color="#16a085", penwidth=2];'
+                )
 
         lines.append("}")
         return "\n".join(lines) + "\n"
 
-    def export_to_file(self, target_path: Path | str, title: str = "Genealogical Graph") -> Path:
+    def export_to_file(
+        self, target_path: Path | str, title: str = "Genealogical Graph"
+    ) -> Path:
         """Export DOT script to file."""
         p = Path(target_path)
         p.parent.mkdir(parents=True, exist_ok=True)

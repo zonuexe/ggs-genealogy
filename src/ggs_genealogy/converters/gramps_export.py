@@ -81,7 +81,9 @@ class GrampsExporter:
         # Export People
         for idx, p_uri in enumerate(person_uris, start=1):
             handle = person_handle_map[str(p_uri)]
-            p_elem = etree.SubElement(people_elem, "person", id=f"I{idx:04d}", handle=handle)
+            p_elem = etree.SubElement(
+                people_elem, "person", id=f"I{idx:04d}", handle=handle
+            )
 
             # Determine gender (guess from relations or name)
             gender = "U"
@@ -136,17 +138,25 @@ class GrampsExporter:
         ]
         for f_idx, h_uri in enumerate(household_uris, start=1):
             f_handle = f"F_{f_idx:04d}"
-            f_elem = etree.SubElement(families_elem, "family", id=f"F{f_idx:04d}", handle=f_handle)
+            f_elem = etree.SubElement(
+                families_elem, "family", id=f"F{f_idx:04d}", handle=f_handle
+            )
             etree.SubElement(f_elem, "rel", type="Civil Union")
 
             head_objs = list(self.graph.objects(h_uri, URIRef(KOSEKI_NS + "戸主")))
             if head_objs and str(head_objs[0]) in person_handle_map:
-                etree.SubElement(f_elem, "father", hlink=person_handle_map[str(head_objs[0])])
+                etree.SubElement(
+                    f_elem, "father", hlink=person_handle_map[str(head_objs[0])]
+                )
 
             # Members
             for member in self.graph.objects(h_uri, URIRef(KOSEKI_NS + "構成員")):
-                if str(member) in person_handle_map and (not head_objs or member != head_objs[0]):
-                    etree.SubElement(f_elem, "childref", hlink=person_handle_map[str(member)])
+                if str(member) in person_handle_map and (
+                    not head_objs or member != head_objs[0]
+                ):
+                    etree.SubElement(
+                        f_elem, "childref", hlink=person_handle_map[str(member)]
+                    )
 
             etree.SubElement(f_elem, "attribute", type="ggs:uri", value=str(h_uri))
 
@@ -156,7 +166,13 @@ class GrampsExporter:
         notes_elem = root.find("notes")
         if notes_elem is not None:
             ttl_data = self.graph.serialize(format="turtle")
-            note_elem = etree.SubElement(notes_elem, "note", id="N_GGS_TURTLE_SSOT", handle="N_GGS_0001", type="Transcript")
+            note_elem = etree.SubElement(
+                notes_elem,
+                "note",
+                id="N_GGS_TURTLE_SSOT",
+                handle="N_GGS_0001",
+                type="Transcript",
+            )
             text_elem = etree.SubElement(note_elem, "text")
             text_elem.text = ttl_data
 

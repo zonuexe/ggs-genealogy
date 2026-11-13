@@ -44,7 +44,9 @@ class SemanticDiffer:
         return g
 
     @classmethod
-    def diff(cls, source_a: str | Path | Graph, source_b: str | Path | Graph) -> SemanticDiffResult:
+    def diff(
+        cls, source_a: str | Path | Graph, source_b: str | Path | Graph
+    ) -> SemanticDiffResult:
         """Compute semantic difference between two RDF graphs."""
         g_a = cls.load_source(source_a)
         g_b = cls.load_source(source_b)
@@ -93,7 +95,9 @@ def render_diff_rich(
     c = console or Console()
 
     if diff_result.is_identical:
-        c.print(f"[bold green]✓ Identical:[/] {source_a_label} and {source_b_label} are semantically equivalent ({diff_result.common_triples_count} triples).")
+        c.print(
+            f"[bold green]✓ Identical:[/] {source_a_label} and {source_b_label} are semantically equivalent ({diff_result.common_triples_count} triples)."
+        )
         return
 
     c.print(
@@ -108,9 +112,13 @@ def render_diff_rich(
     table.add_column("Object", style="white")
 
     for s, p, o in diff_result.removed_triples:
-        table.add_row("[-]", _format_term(s), _format_term(p), _format_term(o), style="red")
+        table.add_row(
+            "[-]", _format_term(s), _format_term(p), _format_term(o), style="red"
+        )
 
     for s, p, o in diff_result.added_triples:
-        table.add_row("[+]", _format_term(s), _format_term(p), _format_term(o), style="green")
+        table.add_row(
+            "[+]", _format_term(s), _format_term(p), _format_term(o), style="green"
+        )
 
     c.print(table)

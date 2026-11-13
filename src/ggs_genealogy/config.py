@@ -17,9 +17,15 @@ class GgsConfig(BaseModel):
         default="https://example.org/koseki#",
         description="Base URI for RDF subjects",
     )
-    data_dir: Path = Field(default=Path("data"), description="Path to RDF data directory")
-    work_dir: Path = Field(default=Path("work"), description="Path to working/export directory")
-    docs_dir: Path = Field(default=Path("docs"), description="Path to documentation directory")
+    data_dir: Path = Field(
+        default=Path("data"), description="Path to RDF data directory"
+    )
+    work_dir: Path = Field(
+        default=Path("work"), description="Path to working/export directory"
+    )
+    docs_dir: Path = Field(
+        default=Path("docs"), description="Path to documentation directory"
+    )
     root_dir: Path = Field(default=Path(), description="Project root directory")
 
     @property

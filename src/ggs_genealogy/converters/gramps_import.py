@@ -41,7 +41,9 @@ class GrampsImporter:
 
         # 1. Check if SSOT note is embedded
         ns = {"g": GRAMPS_NS}
-        ssot_notes = root.xpath("//g:note[@id='N_GGS_TURTLE_SSOT']/g:text/text()", namespaces=ns)
+        ssot_notes = root.xpath(
+            "//g:note[@id='N_GGS_TURTLE_SSOT']/g:text/text()", namespaces=ns
+        )
         if isinstance(ssot_notes, list) and ssot_notes:
             graph = Graph()
             graph.parse(data=str(ssot_notes[0]), format="turtle")
@@ -79,11 +81,15 @@ class GrampsImporter:
                 name_elem = names[0]
                 first_nodes = name_elem.xpath("g:first/text()", namespaces=ns)
                 first_name = (
-                    str(first_nodes[0]) if isinstance(first_nodes, list) and first_nodes else ""
+                    str(first_nodes[0])
+                    if isinstance(first_nodes, list) and first_nodes
+                    else ""
                 )
                 sur_nodes = name_elem.xpath("g:surname/text()", namespaces=ns)
                 surname = (
-                    str(sur_nodes[0]) if isinstance(sur_nodes, list) and sur_nodes else ""
+                    str(sur_nodes[0])
+                    if isinstance(sur_nodes, list) and sur_nodes
+                    else ""
                 )
 
                 name_bnode = graph.value(person_uri, ic_ns["氏名"])
